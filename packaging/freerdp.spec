@@ -1,7 +1,7 @@
 %bcond_with x
 
 Name:           freerdp
-Version:        1.1.0beta1
+Version:        1.1.0
 Release:        0
 Summary:        Remote Desktop Protocol functionality
 License:        Apache-2.0
@@ -69,6 +69,8 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL='install -p'
+install -p -D winpr/tools/makecert/cli/winpr-makecert $RPM_BUILD_ROOT%{_bindir}/winpr-makecert
+rm $RPM_BUILD_ROOT%{_libdir}/libwinpr-makecert-tool.a
 install -m 644 -p -D winpr/include/winpr/config.h $RPM_BUILD_ROOT%{_includedir}/winpr/config.h
 
 
@@ -80,10 +82,14 @@ install -m 644 -p -D winpr/include/winpr/config.h $RPM_BUILD_ROOT%{_includedir}/
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %license LICENSE
+%if %{with wayland}
+%{_bindir}/wlfreerdp
+%endif
 %if %{with x}
 %{_bindir}/xfreerdp
 %{_bindir}/xfreerdp-server
 %endif
+%{_bindir}/winpr-makecert
 %{_libdir}/lib*.so.*
 
 %files devel
